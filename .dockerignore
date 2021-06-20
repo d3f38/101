@@ -1,0 +1,12 @@
+.DS_Store
+.idea
+.vscode
+.git
+.gitignore
+.gitlab
+.gitlab-ci.yml
+.helm
+.dockerignore
+.docker/Dockerfile*
+README.md
+
