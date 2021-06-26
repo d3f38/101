@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react'
 import styled from 'styled-components'
 
 import { Card, Cards } from '@app/types/common.types'
-import { chackCardRules } from '@app/utils/chackCardRules'
+import { checkCardRules } from '@app/utils/checkCardRules'
 import { notify } from '@app/utils/notify'
 
 import { CardComponent } from '../Card'
@@ -12,11 +12,10 @@ export const Player: FC<{
   pileCards: Cards
   setPileCards: (e: Cards) => void
 }> = ({ cards, pileCards, setPileCards }) => {
-  console.log('🚀 ~ file: index.tsx ~ line 38 ~ cards', cards)
   const [playerCards, setPlayerCards] = useState<Cards>(cards)
 
   const handleClick = (card: Card) => {
-    const isMatchRules = chackCardRules(card, pileCards[pileCards.length - 1])
+    const isMatchRules = checkCardRules(card, pileCards[pileCards.length - 1])
 
     if (isMatchRules) {
       setPileCards([...pileCards, card])
