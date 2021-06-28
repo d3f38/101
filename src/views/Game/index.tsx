@@ -9,8 +9,7 @@ import { CARDS_IN_HAND } from '@app/constants'
 import {
   getNewDeck,
   selectDeck,
-  takeCards,
-  updatePile,
+  takeInitialCards,
 } from '@app/features/deck/deckSlice'
 import {
   handOutCards,
@@ -21,7 +20,9 @@ import { selectSettings } from '@app/features/settings/settingsSlice'
 
 export const Game = () => {
   const dispatch = useDispatch()
-  const { deckId, status, cardsInGame, pile } = useSelector(selectDeck)
+  const { deckId, status, cardsInGame, pile, error, activeSuit } = useSelector(
+    selectDeck
+  )
   const { playersAmount } = useSelector(selectSettings)
   const opponentsCards = useSelector(selectOpponents)
   const mainPlayer = useSelector(selectPlayer)
@@ -31,12 +32,8 @@ export const Game = () => {
   }, [dispatch])
 
   useEffect(() => {
-    getNewDeck()
-  }, [])
-
-  useEffect(() => {
     if (deckId) {
-      dispatch(takeCards(CARDS_IN_HAND * playersAmount + 1))
+      dispatch(takeInitialCards(CARDS_IN_HAND * playersAmount + 1))
     }
   }, [deckId, playersAmount])
 
@@ -51,32 +48,26 @@ export const Game = () => {
       <Table>
         <OpponentsSide>
           {opponentsCards &&
-            opponentsCards.map((item: any) => (
-              <Player
-                key={item.remaining}
-                cards={item.playerCards}
-                pileCards={pile}
-                setPileCards={(e) => dispatch(updatePile(e))}
-              />
-            ))}
+            opponentsCards.map((item) => <Player data={item} key={item.id} />)}
         </OpponentsSide>
 
         <PlayerField>
           <CardComponent />
           <Pile cards={pile} />
         </PlayerField>
+        <div>{activeSuit}</div>
 
-        {mainPlayer && (
-          <Player
-            cards={mainPlayer.playerCards}
-            pileCards={pile}
-            setPileCards={(e) => dispatch(updatePile(e))}
-          />
-        )}
+        {mainPlayer && <Player data={mainPlayer} />}
       </Table>
     </Container>
   ) : (
-    <span>LOADING..</span>
+    <>
+      {!error ? (
+        <span>LOADING..</span>
+      ) : (
+        <span>An error has occurred. Please refresh the page!</span>
+      )}
+    </>
   )
 }
 

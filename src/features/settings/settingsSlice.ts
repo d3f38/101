@@ -7,7 +7,7 @@ interface SettingsState {
 }
 
 const initialState: SettingsState = {
-  playersAmount: 2,
+  playersAmount: 3,
 }
 
 export const settingsSlice = createSlice({

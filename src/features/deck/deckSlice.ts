@@ -2,7 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 import { RootState } from '@app/app/rootReducer'
-import { Cards } from '@app/types/common.types'
+import { Cards, Suit } from '@app/types/common.types'
+import { fetchCards } from '@app/utils/fetchers/fetchCards'
 
 export const getNewDeck = createAsyncThunk('deck/getNewDeck', async () => {
   const response = await axios(
@@ -12,10 +13,9 @@ export const getNewDeck = createAsyncThunk('deck/getNewDeck', async () => {
   return response.data
 })
 
-export const takeCards = createAsyncThunk(
-  'deck/takeCards',
+export const takeInitialCards = createAsyncThunk(
+  'deck/takeInitialCards',
   async (cardsAmount: number, { getState }) => {
-    console.log('🚀 ~ file: deckSlice.ts ~ line 18 ~ cardsAmount', cardsAmount)
     // @ts-ignore
     const { deckId, status } = getState().deck
 
@@ -23,9 +23,7 @@ export const takeCards = createAsyncThunk(
       return
     }
 
-    const response = await axios(
-      `${process.env.REACT_APP_API_URL}/deck/${deckId}/draw/?count=${cardsAmount}`
-    )
+    const response = await fetchCards(deckId, cardsAmount)
 
     return response.data
   }
@@ -37,6 +35,8 @@ interface DeckState {
   status: 'idle' | 'pending'
   cardsInGame: Cards
   pile: Cards
+  activeSuit: Suit | null
+  error: any
 }
 
 const initialState: DeckState = {
@@ -45,6 +45,8 @@ const initialState: DeckState = {
   status: 'idle',
   cardsInGame: [],
   pile: [],
+  activeSuit: null,
+  error: null,
 }
 
 export const deckSlice = createSlice({
@@ -53,6 +55,12 @@ export const deckSlice = createSlice({
   reducers: {
     updatePile: (state, action) => {
       state.pile = action.payload
+    },
+    updateRemaining: (state, action) => {
+      state.remaining = action.payload
+    },
+    setSuit: (state, action) => {
+      state.activeSuit = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -64,10 +72,15 @@ export const deckSlice = createSlice({
         state.deckId = action.payload.deck_id
         state.remaining = action.payload.remaining
       })
-      .addCase(takeCards.pending, (state) => {
+      .addCase(getNewDeck.rejected, (state, action) => {
+        state.status = 'idle'
+        state.error = action.error
+      })
+
+      .addCase(takeInitialCards.pending, (state) => {
         state.status = 'pending'
       })
-      .addCase(takeCards.fulfilled, (state, action) => {
+      .addCase(takeInitialCards.fulfilled, (state, action) => {
         const lastCardIndex = action.payload.cards.length - 1
 
         state.status = 'idle'
@@ -81,6 +94,6 @@ export const deckSlice = createSlice({
 // Selectors
 export const selectDeck = (state: RootState) => state.deck
 
-export const { updatePile } = deckSlice.actions
+export const { updatePile, updateRemaining, setSuit } = deckSlice.actions
 
 export default deckSlice.reducer

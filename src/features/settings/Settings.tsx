@@ -15,16 +15,14 @@ export const Settings = () => {
   return (
     <Container>
       Players:{' '}
-      <select name="players-amount" onChange={handleChange}>
-        <option value="2" selected={playersAmount === 2}>
-          2
-        </option>
-        <option value="3" selected={playersAmount === 3}>
-          3
-        </option>
-        <option value="4" selected={playersAmount === 4}>
-          4
-        </option>
+      <select
+        name="players-amount"
+        onChange={handleChange}
+        value={playersAmount}
+      >
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
       </select>
     </Container>
   )
