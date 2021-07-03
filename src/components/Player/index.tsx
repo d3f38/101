@@ -15,7 +15,7 @@ import {
   takeСards,
   updatePlayerCards,
 } from '@app/features/players/playersSlice'
-import { Card, PenaltyCards, Suits } from '@app/types/common.types'
+import { Card, PenaltyCard, Suit } from '@app/types/common.types'
 import { checkCardRules } from '@app/utils/checkCardRules'
 import { checkNextStep } from '@app/utils/checkNextStep'
 import { fetchCards } from '@app/utils/fetchers/fetchCards'
@@ -77,13 +77,13 @@ export const Player: FC<{
       if (cardConditions.isAce) {
         sendToNextStep(id, true)
       } else if (cardConditions.isSpadesKing) {
-        getCards(nextPlayerId, PenaltyCards.KING_SPADES)
+        getCards(nextPlayerId, PenaltyCard.KING_SPADES)
         sendToNextStep(id, true)
       } else if (cardConditions.isSpadesSeven) {
-        getCards(nextPlayerId, PenaltyCards.SEVEN_SPADES)
+        getCards(nextPlayerId, PenaltyCard.SEVEN_SPADES)
         sendToNextStep(id, true)
       } else if (cardConditions.isSeven) {
-        getCards(nextPlayerId, PenaltyCards.SEVEN)
+        getCards(nextPlayerId, PenaltyCard.SEVEN)
         sendToNextStep(id, true)
       } else if (cardConditions.isSix) {
         setIsCoveredSix(false)
@@ -136,10 +136,10 @@ export const Player: FC<{
             sendToNextStep(id)
           }}
         >
-          <option value={Suits.CLUBS}>{Suits.CLUBS}</option>
-          <option value={Suits.SPADES}>{Suits.SPADES}</option>
-          <option value={Suits.HEARTS}>{Suits.HEARTS}</option>
-          <option value={Suits.DIAMONDS}>{Suits.DIAMONDS}</option>
+          <option value={Suit.CLUBS}>{Suit.CLUBS}</option>
+          <option value={Suit.SPADES}>{Suit.SPADES}</option>
+          <option value={Suit.HEARTS}>{Suit.HEARTS}</option>
+          <option value={Suit.DIAMONDS}>{Suit.DIAMONDS}</option>
         </select>
       )}
     </Container>

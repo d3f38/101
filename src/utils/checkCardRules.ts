@@ -1,9 +1,9 @@
-import { Card, Suit } from '@app/types/common.types'
+import { ActiveSuit, Card } from '@app/types/common.types'
 
 export const checkCardRules = (
   currentCard: Card,
   pileCard: Card,
-  activeSuit: Suit | null
+  activeSuit: ActiveSuit | null
 ): boolean => {
   const currentSuit = activeSuit || pileCard.suit
 

@@ -1,16 +1,16 @@
-import { Card, CardsValues, Suits } from '@app/types/common.types'
+import { Card, CardsValue, Suit } from '@app/types/common.types'
 
 export const getCardConditions = (card: Card, lastPilecard: Card) => ({
-  isSix: card.value === CardsValues.SIX,
-  isSeven: card.value === CardsValues.SEVEN,
-  isAce: card.value === CardsValues.ACE,
-  isQueen: card.value === CardsValues.QUEEN,
-  isSpadesKing: card.value === CardsValues.KING && card.suit === Suits.SPADES,
-  isSpadesSeven: card.suit === Suits.SPADES && card.value === CardsValues.SEVEN,
+  isSix: card.value === CardsValue.SIX,
+  isSeven: card.value === CardsValue.SEVEN,
+  isAce: card.value === CardsValue.ACE,
+  isQueen: card.value === CardsValue.QUEEN,
+  isSpadesKing: card.value === CardsValue.KING && card.suit === Suit.SPADES,
+  isSpadesSeven: card.suit === Suit.SPADES && card.value === CardsValue.SEVEN,
   isCardWithoutSkipStep:
-    card.value !== CardsValues.SEVEN &&
-    card.value !== CardsValues.KING &&
-    card.value !== CardsValues.ACE,
+    card.value !== CardsValue.SEVEN &&
+    card.value !== CardsValue.KING &&
+    card.value !== CardsValue.ACE,
   isCovered:
-    lastPilecard.value === CardsValues.SIX && card.value !== CardsValues.SIX,
+    lastPilecard.value === CardsValue.SIX && card.value !== CardsValue.SIX,
 })

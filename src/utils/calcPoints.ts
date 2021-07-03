@@ -1,4 +1,4 @@
-import { Card, Cards, CardsPoints, CardsValues } from '@app/types/common.types'
+import { Card, Cards, CardsPoint, CardsValue } from '@app/types/common.types'
 
 export const calcPoints = (cards: Cards) => {
   const points = cards.reduce((acc: number, curr: Card) => {
@@ -10,20 +10,20 @@ export const calcPoints = (cards: Cards) => {
       }
     } else {
       switch (curr.value) {
-        case CardsValues.JACK:
-          acc = acc + CardsPoints.JACK
+        case CardsValue.JACK:
+          acc = acc + CardsPoint.JACK
           break
 
-        case CardsValues.QUEEN:
-          acc = acc + CardsPoints.QUEEN
+        case CardsValue.QUEEN:
+          acc = acc + CardsPoint.QUEEN
           break
 
-        case CardsValues.KING:
-          acc = acc + CardsPoints.KING
+        case CardsValue.KING:
+          acc = acc + CardsPoint.KING
           break
 
-        case CardsValues.ACE:
-          acc = acc + CardsPoints.ACE
+        case CardsValue.ACE:
+          acc = acc + CardsPoint.ACE
           break
 
         default:

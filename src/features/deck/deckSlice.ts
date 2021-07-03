@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 import { RootState } from '@app/app/rootReducer'
-import { Cards, Suit } from '@app/types/common.types'
+import { ActiveSuit, Cards } from '@app/types/common.types'
 import { fetchCards } from '@app/utils/fetchers/fetchCards'
 
 export const getNewDeck = createAsyncThunk('deck/getNewDeck', async () => {
@@ -35,7 +35,7 @@ interface DeckState {
   status: 'idle' | 'pending'
   cardsInGame: Cards
   pile: Cards
-  activeSuit: Suit | null
+  activeSuit: ActiveSuit | null
   error: any
 }
 

@@ -26,16 +26,16 @@ export interface CardsData {
   remaining: number
 }
 
-export type Suit = 'HEARTS' | 'CLUBS' | 'SPADES' | 'DIAMONDS'
+export type ActiveSuit = 'HEARTS' | 'CLUBS' | 'SPADES' | 'DIAMONDS'
 
-export enum Suits {
+export enum Suit {
   HEARTS = 'HEARTS',
   CLUBS = 'CLUBS',
   SPADES = 'SPADES',
   DIAMONDS = 'DIAMONDS',
 }
 
-export enum CardsValues {
+export enum CardsValue {
   SIX = '6',
   SEVEN = '7',
   JACK = 'JACK',
@@ -44,14 +44,14 @@ export enum CardsValues {
   ACE = 'ACE',
 }
 
-export enum CardsPoints {
+export enum CardsPoint {
   JACK = 2,
   QUEEN = 3,
   KING = 4,
   ACE = 11,
 }
 
-export enum PenaltyCards {
+export enum PenaltyCard {
   KING_SPADES = 5,
   SEVEN_SPADES = 4,
   SEVEN = 2,
