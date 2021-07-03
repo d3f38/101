@@ -37,6 +37,7 @@ interface DeckState {
   pile: Cards
   activeSuit: ActiveSuit | null
   error: any
+  alreadyTookTheCard: boolean
 }
 
 const initialState: DeckState = {
@@ -47,6 +48,7 @@ const initialState: DeckState = {
   pile: [],
   activeSuit: null,
   error: null,
+  alreadyTookTheCard: false,
 }
 
 export const deckSlice = createSlice({
@@ -61,6 +63,9 @@ export const deckSlice = createSlice({
     },
     setSuit: (state, action) => {
       state.activeSuit = action.payload
+    },
+    setAlreadyTookTheCard: (state, action) => {
+      state.alreadyTookTheCard = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -94,6 +99,6 @@ export const deckSlice = createSlice({
 // Selectors
 export const selectDeck = (state: RootState) => state.deck
 
-export const { updatePile, updateRemaining, setSuit } = deckSlice.actions
+export const deckActions = deckSlice.actions
 
 export default deckSlice.reducer

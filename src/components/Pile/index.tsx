@@ -1,11 +1,11 @@
-import React, { FC } from 'react'
+import React, { FC, memo } from 'react'
 import styled from 'styled-components'
 
 import { Cards } from '@app/types/common.types'
 
 import { CardComponent } from '../Card'
 
-export const Pile: FC<{ cards: Cards }> = ({ cards }) => {
+export const Pile: FC<{ cards: Cards }> = memo(({ cards }) => {
   return (
     <Container>
       {cards &&
@@ -16,7 +16,7 @@ export const Pile: FC<{ cards: Cards }> = ({ cards }) => {
         ))}
     </Container>
   )
-}
+})
 
 const Container = styled.div`
   position: relative;

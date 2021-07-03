@@ -1,21 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 
-import {
-  selectDeck,
-  setSuit,
-  updatePile,
-  updateRemaining,
-} from '@app/features/deck/deckSlice'
-import {
-  nextStep,
-  Player as PlayerType,
-  selectAllPlayers,
-  takeСards,
-  updatePlayerCards,
-} from '@app/features/players/playersSlice'
-import { Card, PenaltyCard, Suit } from '@app/types/common.types'
+import { Player as PlayerType } from '@app/features/players/playersSlice'
+import { useDeck } from '@app/hooks/useDeck'
+import { usePlayers } from '@app/hooks/usePlayers'
+import { Card, PenaltyCard } from '@app/types/common.types'
 import { checkCardRules } from '@app/utils/checkCardRules'
 import { checkNextStep } from '@app/utils/checkNextStep'
 import { fetchCards } from '@app/utils/fetchers/fetchCards'
@@ -24,37 +13,46 @@ import { getNextPlayerId } from '@app/utils/getNextPlayerId'
 import { notify } from '@app/utils/notify'
 
 import { CardComponent } from '../Card'
+import { SuitSelect } from '../SuitSelect'
 
 export const Player: FC<{
   data: PlayerType
 }> = ({ data }) => {
-  const dispatch = useDispatch()
-  const { deckId, pile, activeSuit } = useSelector(selectDeck)
-  const players = useSelector(selectAllPlayers)
+  const {
+    deckId,
+    pile,
+    activeSuit,
+    updatePile,
+    updateRemaining,
+    setSuit,
+    alreadyTookTheCard,
+    setAlreadyTookTheCard,
+  } = useDeck()
+
+  const {
+    nextStep,
+    allPlayers,
+    takeСards,
+    updatePlayerCards,
+    setHasNextStep,
+  } = usePlayers()
 
   const lastPileCard = pile[pile.length - 1]
-  const { id, isActive, cards } = data
+  const { id, isActive, cards, points } = data
 
   const [isShownSuitSelect, setIsShownSuitSelect] = useState(false)
   const [isCoveredSix, setIsCoveredSix] = useState(true)
-  const [hasNextStep, setHasNextStep] = useState(
-    checkNextStep(cards, lastPileCard, activeSuit)
-  )
 
-  const sendToNextStep = (id: number, skip = false) =>
-    dispatch(
-      nextStep({
-        id,
-        skip,
-      })
-    )
+  const sendToNextStep = (id: number, skip = false) => {
+    nextStep(id, skip)
+  }
 
   const getCards = async (id: number, amountCards: number) => {
     if (deckId) {
       const response = await fetchCards(deckId, amountCards)
 
-      dispatch(updateRemaining(response.data.remaining))
-      dispatch(takeСards({ id, cards: response.data.cards }))
+      updateRemaining(response.data.remaining)
+      takeСards(id, response.data.cards)
     }
   }
 
@@ -62,16 +60,15 @@ export const Player: FC<{
     const isMatchRules = checkCardRules(card, lastPileCard, activeSuit)
 
     if (isMatchRules) {
-      dispatch(setSuit(null))
-      dispatch(updatePile([...pile, card]))
-      dispatch(
-        updatePlayerCards({
-          id,
-          cards: cards.filter((item) => item.code !== card.code),
-        })
+      setSuit(null)
+      updatePile([...pile, card])
+
+      updatePlayerCards(
+        id,
+        cards.filter((item) => item.code !== card.code)
       )
 
-      const nextPlayerId = getNextPlayerId(id, players.length)
+      const nextPlayerId = getNextPlayerId(id, allPlayers.length)
       const cardConditions = getCardConditions(card, lastPileCard)
 
       if (cardConditions.isAce) {
@@ -101,13 +98,19 @@ export const Player: FC<{
         }
       }
     } else {
-      notify('Вы не можете сходить этой картой!')
+      notify(`You can't go with this card!`)
     }
   }
 
   useEffect(() => {
-    setHasNextStep(checkNextStep(cards, lastPileCard, activeSuit))
-  }, [cards, pile, activeSuit])
+    const nextStepExist = checkNextStep(cards, lastPileCard, activeSuit)
+    setHasNextStep(id, nextStepExist)
+
+    if (!nextStepExist && alreadyTookTheCard && !isShownSuitSelect) {
+      sendToNextStep(id)
+      setAlreadyTookTheCard(false)
+    }
+  }, [cards, pile, activeSuit, isShownSuitSelect])
 
   return (
     <Container isActive={isActive}>
@@ -120,27 +123,23 @@ export const Player: FC<{
           ))}
       </Wrapper>
 
-      {isActive && <ActiveLabel />}
+      <ActionsBlock>
+        {isActive && <DealerButton>D</DealerButton>}
 
-      {hasNextStep ? (
-        <span>next step exist</span>
-      ) : (
-        <button onClick={() => getCards(id, 1)}>take a card</button>
-      )}
+        <PlayerInfo>
+          <Name>Player {id}</Name>
+          <Points>{points}</Points>
+        </PlayerInfo>
+      </ActionsBlock>
 
-      {isShownSuitSelect && (
-        <select
+      {isShownSuitSelect && isActive && (
+        <SuitSelect
           onChange={(e) => {
-            dispatch(setSuit(e.target.value))
+            setSuit(e.target.value)
             setIsShownSuitSelect(false)
             sendToNextStep(id)
           }}
-        >
-          <option value={Suit.CLUBS}>{Suit.CLUBS}</option>
-          <option value={Suit.SPADES}>{Suit.SPADES}</option>
-          <option value={Suit.HEARTS}>{Suit.HEARTS}</option>
-          <option value={Suit.DIAMONDS}>{Suit.DIAMONDS}</option>
-        </select>
+        />
       )}
     </Container>
   )
@@ -169,9 +168,54 @@ const CardWrapper = styled.div<{ left: number }>`
   }
 `
 
-const ActiveLabel = styled.div`
+const ActionsBlock = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+`
+
+const DealerButton = styled.div`
   width: 30px;
+  min-width: 30px;
   height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 50%;
-  background: lightgreen;
+  background: #eee683;
+  font-weight: bold;
+`
+
+const Points = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #e8f3f5;
+  font-weight: bold;
+`
+
+const PlayerInfo = styled.div`
+  position: relative;
+  padding: 5px 15px;
+  background-color: #345c97;
+  border: 2px solid #d2e4d6;
+  border-radius: 10px;
+`
+
+const Name = styled.div`
+  position: relative;
+  color: #e8f3f5;
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%);
+    width: 40px;
+    height: 1px;
+    background-color: #d2e4d6;
+  }
 `

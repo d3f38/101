@@ -1,61 +1,83 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useCallback, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 import { CardComponent } from '@app/components/Card'
 import { Pile } from '@app/components/Pile'
 import { Player } from '@app/components/Player'
+import { SuitIcon } from '@app/components/SuitIcon'
 import { CARDS_IN_HAND } from '@app/constants'
-import {
-  getNewDeck,
-  selectDeck,
-  takeInitialCards,
-} from '@app/features/deck/deckSlice'
-import {
-  handOutCards,
-  selectOpponents,
-  selectPlayer,
-} from '@app/features/players/playersSlice'
 import { selectSettings } from '@app/features/settings/settingsSlice'
+import { useDeck } from '@app/hooks/useDeck'
+import { usePlayers } from '@app/hooks/usePlayers'
+import { fetchCards } from '@app/utils/fetchers/fetchCards'
 
 export const Game = () => {
-  const dispatch = useDispatch()
-  const { deckId, status, cardsInGame, pile, error, activeSuit } = useSelector(
-    selectDeck
-  )
   const { playersAmount } = useSelector(selectSettings)
-  const opponentsCards = useSelector(selectOpponents)
-  const mainPlayer = useSelector(selectPlayer)
+
+  const {
+    mainPlayer,
+    opponents,
+    handOutCards,
+    takeСards,
+    allPlayers,
+  } = usePlayers()
+  const {
+    deckId,
+    status,
+    cardsInGame,
+    pile,
+    error,
+    activeSuit,
+    takeInitialCards,
+    getNewDeck,
+    updateRemaining,
+  } = useDeck()
 
   useEffect(() => {
-    dispatch(getNewDeck())
-  }, [dispatch])
+    getNewDeck()
+  }, [])
 
   useEffect(() => {
     if (deckId) {
-      dispatch(takeInitialCards(CARDS_IN_HAND * playersAmount + 1))
+      takeInitialCards(CARDS_IN_HAND * playersAmount + 1)
     }
   }, [deckId, playersAmount])
 
   useEffect(() => {
     if (cardsInGame.length) {
-      dispatch(handOutCards(cardsInGame))
+      handOutCards(cardsInGame)
     }
   }, [cardsInGame, deckId])
+
+  const activePlayer = allPlayers.find((item) => item.isActive)
+
+  const getAdditionalCard = useCallback(async () => {
+    if (deckId && activePlayer && !activePlayer.hasNextStep) {
+      const response = await fetchCards(deckId, 1)
+
+      updateRemaining(response.data.remaining)
+      takeСards(activePlayer.id, response.data.cards)
+    }
+  }, [deckId, activePlayer])
 
   return status !== 'pending' ? (
     <Container>
       <Table>
         <OpponentsSide>
-          {opponentsCards &&
-            opponentsCards.map((item) => <Player data={item} key={item.id} />)}
+          {opponents &&
+            opponents.map((item) => <Player data={item} key={item.id} />)}
         </OpponentsSide>
 
         <PlayerField>
-          <CardComponent />
+          <CardComponent
+            onClick={getAdditionalCard}
+            isActive={activePlayer && !activePlayer.hasNextStep}
+          />
           <Pile cards={pile} />
         </PlayerField>
-        <div>{activeSuit}</div>
+
+        {activeSuit && <SuitIcon suit={activeSuit} />}
 
         {mainPlayer && <Player data={mainPlayer} />}
       </Table>
@@ -73,11 +95,11 @@ export const Game = () => {
 
 const Container = styled.div`
   width: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
-  padding-top: 60px;
 
   .ant-form label {
     font-size: 16px;
@@ -87,6 +109,11 @@ const Container = styled.div`
 
 const Table = styled.div`
   width: 100%;
+  padding: 25px;
+  background-color: #35654d;
+  border: 30px solid #394b41;
+  box-sizing: border-box;
+  border-radius: 100px;
 `
 
 const PlayerField = styled.div`

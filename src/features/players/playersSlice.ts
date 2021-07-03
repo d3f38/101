@@ -12,6 +12,8 @@ export interface Player {
   isOpponent: boolean
   isActive: boolean
   cards: Cards
+  points: number
+  hasNextStep: boolean
 }
 
 type PlayersState = Player[]
@@ -26,6 +28,8 @@ const handOut = (cardsInGame: Cards): PlayersState => {
     isOpponent: index !== 0,
     isActive: false,
     cards: item,
+    points: 0,
+    hasNextStep: false,
   }))
 
   distributedCards[getRandomInt(0, distributedCards.length - 1)].isActive = true
@@ -40,15 +44,6 @@ export const playersSlice = createSlice({
     handOutCards: (state, action) => handOut(action.payload),
     nextStep: (state, action) => {
       const currentActivePlayer = action.payload.id
-      // let nextActivePlayer = currentActivePlayer + 1
-
-      // if (action.payload.skip) {
-      //   nextActivePlayer++
-      // }
-
-      // if (nextActivePlayer >= state.length) {
-      //   nextActivePlayer = nextActivePlayer - state.length
-      // }
 
       const nextActivePlayer = getNextPlayerId(
         currentActivePlayer,
@@ -65,8 +60,17 @@ export const playersSlice = createSlice({
         ...action.payload.cards,
       ]
     },
+    setHasNextStep: (state, action) => {
+      state[action.payload.id].hasNextStep = action.payload.hasNextStep
+    },
     updatePlayerCards: (state, action) => {
       state[action.payload.id].cards = action.payload.cards
+    },
+    addPoints: (state, action) => {
+      state[action.payload.id].points += action.payload.points
+    },
+    reducePoints: (state, action) => {
+      state[action.payload.id].points -= action.payload.points
     },
   },
 })
@@ -78,11 +82,6 @@ export const selectOpponents = (state: RootState) =>
 export const selectPlayer = (state: RootState) =>
   state.players.find((item) => !item.isOpponent)
 
-export const {
-  handOutCards,
-  nextStep,
-  takeСards,
-  updatePlayerCards,
-} = playersSlice.actions
+export const playersActions = playersSlice.actions
 
 export default playersSlice.reducer

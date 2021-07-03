@@ -34,7 +34,5 @@ export const calcPoints = (cards: Cards) => {
     return acc
   }, 0)
 
-  console.log('🚀 ~ file: calcPoints.ts ~ points = ', points)
-
   return points
 }
