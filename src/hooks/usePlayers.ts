@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { PayloadAction } from '@reduxjs/toolkit'
 
 import {
   playersActions,
@@ -17,8 +16,7 @@ export const usePlayers = () => {
     nextStep,
     takeСards,
     updatePlayerCards,
-    addPoints,
-    reducePoints,
+    updatePoints,
     setHasNextStep,
   } = playersActions
 
@@ -35,8 +33,8 @@ export const usePlayers = () => {
     takeСards: (id: number, cards: Cards) => dispatch(takeСards({ id, cards })),
     updatePlayerCards: (id: number, cards: Cards) =>
       dispatch(updatePlayerCards({ id, cards })),
-    addPoints: (e: PayloadAction) => dispatch(addPoints(e)),
-    reducePoints: (e: PayloadAction) => dispatch(reducePoints(e)),
+    updatePoints: (id: number, points: number) =>
+      dispatch(updatePoints({ id, points })),
     setHasNextStep: (id: number, hasNextStep: boolean) =>
       dispatch(setHasNextStep({ id, hasNextStep })),
   }

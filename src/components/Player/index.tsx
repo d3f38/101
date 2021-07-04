@@ -3,8 +3,10 @@ import styled from 'styled-components'
 
 import { Player as PlayerType } from '@app/features/players/playersSlice'
 import { useDeck } from '@app/hooks/useDeck'
+import { useGame } from '@app/hooks/useGame'
 import { usePlayers } from '@app/hooks/usePlayers'
 import { Card, PenaltyCard } from '@app/types/common.types'
+import { calcPoints } from '@app/utils/calcPoints'
 import { checkCardRules } from '@app/utils/checkCardRules'
 import { checkNextStep } from '@app/utils/checkNextStep'
 import { fetchCards } from '@app/utils/fetchers/fetchCards'
@@ -35,10 +37,13 @@ export const Player: FC<{
     takeСards,
     updatePlayerCards,
     setHasNextStep,
+    updatePoints,
   } = usePlayers()
 
+  const { pauseGame, finishGame, gameOver } = useGame()
+
   const lastPileCard = pile[pile.length - 1]
-  const { id, isActive, cards, points } = data
+  const { id, isActive, cards, points, isOpponent } = data
 
   const [isShownSuitSelect, setIsShownSuitSelect] = useState(false)
   const [isCoveredSix, setIsCoveredSix] = useState(true)
@@ -62,7 +67,7 @@ export const Player: FC<{
     if (isMatchRules) {
       setSuit(null)
       updatePile([...pile, card])
-
+      console.log('🚀 ~ file: index.tsx ~ line 108 ~ handleClick ~ id', id)
       updatePlayerCards(
         id,
         cards.filter((item) => item.code !== card.code)
@@ -86,14 +91,14 @@ export const Player: FC<{
         setIsCoveredSix(false)
       } else if (cardConditions.isQueen) {
         setIsShownSuitSelect(true)
-      } else if (isCoveredSix) {
+      } else if (isCoveredSix && !isShownSuitSelect) {
         sendToNextStep(id)
       }
 
       if (cardConditions.isCovered) {
         setIsCoveredSix(true)
 
-        if (cardConditions.isCardWithoutSkipStep) {
+        if (cardConditions.isCardWithoutSkipStep && !isShownSuitSelect) {
           sendToNextStep(id)
         }
       }
@@ -103,21 +108,47 @@ export const Player: FC<{
   }
 
   useEffect(() => {
-    const nextStepExist = checkNextStep(cards, lastPileCard, activeSuit)
-    setHasNextStep(id, nextStepExist)
+    if (cards.length) {
+      const nextStepExist = checkNextStep(cards, lastPileCard, activeSuit)
+      setHasNextStep(id, nextStepExist)
 
-    if (!nextStepExist && alreadyTookTheCard && !isShownSuitSelect) {
-      sendToNextStep(id)
-      setAlreadyTookTheCard(false)
+      if (!nextStepExist && alreadyTookTheCard && !isShownSuitSelect) {
+        sendToNextStep(id)
+        setAlreadyTookTheCard(false)
+      }
+    } else {
+      allPlayers.forEach((item) => {
+        const roundPoints = calcPoints(item.cards)
+        console.log(
+          '🚀 ~ file: index.tsx ~ line 122 ~ allPlayers.forEach ~ roundPoints',
+          roundPoints
+        )
+
+        updatePoints(item.id, roundPoints)
+
+        pauseGame()
+      })
     }
   }, [cards, pile, activeSuit, isShownSuitSelect])
 
+  useEffect(() => {
+    if (points > 25) {
+      finishGame()
+    }
+  }, [points])
+
+  useEffect(() => {
+    if (isActive && isOpponent) {
+      setTimeout(() => handleClick(cards[0]), 2000)
+    }
+  }, [])
+
   return (
-    <Container isActive={isActive}>
+    <Container isActive={isActive && !gameOver}>
       <Wrapper>
         {cards &&
           cards.map((item, index) => (
-            <CardWrapper left={index * 70} key={item.code}>
+            <CardWrapper left={index} key={item.code}>
               <CardComponent data={item} onClick={() => handleClick(item)} />
             </CardWrapper>
           ))}
@@ -161,7 +192,7 @@ const Wrapper = styled.div`
 
 const CardWrapper = styled.div<{ left: number }>`
   position: relative;
-  left: -${({ left }) => left}px;
+  left: -${({ left }) => left * 70}px;
 
   &:hover div {
     transform: translateY(-25px);

@@ -12,5 +12,7 @@ export const getCardConditions = (card: Card, lastPilecard: Card) => ({
     card.value !== CardsValue.KING &&
     card.value !== CardsValue.ACE,
   isCovered:
-    lastPilecard.value === CardsValue.SIX && card.value !== CardsValue.SIX,
+    lastPilecard &&
+    lastPilecard.value === CardsValue.SIX &&
+    card.value !== CardsValue.SIX,
 })

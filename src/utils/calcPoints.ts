@@ -1,12 +1,12 @@
 import { Card, Cards, CardsPoint, CardsValue } from '@app/types/common.types'
 
-export const calcPoints = (cards: Cards) => {
+export const calcPoints = (cards: Cards): number => {
   const points = cards.reduce((acc: number, curr: Card) => {
-    if (Number(curr.value) >= 0) {
-      if (curr.value === '0') {
-        acc = acc + 10
-      } else {
-        acc = acc + Number(curr.value)
+    const numberValue = Number(curr.value)
+
+    if (numberValue >= 2 && numberValue <= 10) {
+      if (numberValue !== 9) {
+        acc = acc + numberValue
       }
     } else {
       switch (curr.value) {

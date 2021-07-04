@@ -5,6 +5,7 @@ export const checkCardRules = (
   pileCard: Card,
   activeSuit: ActiveSuit | null
 ): boolean => {
+  if (!pileCard) return true
   const currentSuit = activeSuit || pileCard.suit
 
   return (

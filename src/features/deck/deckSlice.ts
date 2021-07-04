@@ -86,12 +86,10 @@ export const deckSlice = createSlice({
         state.status = 'pending'
       })
       .addCase(takeInitialCards.fulfilled, (state, action) => {
-        const lastCardIndex = action.payload.cards.length - 1
-
         state.status = 'idle'
-        state.cardsInGame = action.payload.cards.slice(0, lastCardIndex)
+        state.cardsInGame = action.payload.cards
         state.remaining = action.payload.remaining
-        state.pile = [action.payload.cards[lastCardIndex]]
+        state.pile = []
       })
   },
 })

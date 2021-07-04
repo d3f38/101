@@ -20,7 +20,10 @@ type PlayersState = Player[]
 
 const initialState: PlayersState = []
 
-const handOut = (cardsInGame: Cards): PlayersState => {
+const handOut = (
+  cardsInGame: Cards,
+  previusState: PlayersState
+): PlayersState => {
   const splittedPlayersCards = splitCardsForPlayers(cardsInGame, CARDS_IN_HAND)
 
   const distributedCards = splittedPlayersCards.map((item, index) => ({
@@ -28,7 +31,7 @@ const handOut = (cardsInGame: Cards): PlayersState => {
     isOpponent: index !== 0,
     isActive: false,
     cards: item,
-    points: 0,
+    points: (previusState[index] && previusState[index].points) || 0,
     hasNextStep: false,
   }))
 
@@ -41,7 +44,7 @@ export const playersSlice = createSlice({
   name: 'players',
   initialState,
   reducers: {
-    handOutCards: (state, action) => handOut(action.payload),
+    handOutCards: (state, action) => handOut(action.payload, state),
     nextStep: (state, action) => {
       const currentActivePlayer = action.payload.id
 
@@ -66,11 +69,8 @@ export const playersSlice = createSlice({
     updatePlayerCards: (state, action) => {
       state[action.payload.id].cards = action.payload.cards
     },
-    addPoints: (state, action) => {
+    updatePoints: (state, action) => {
       state[action.payload.id].points += action.payload.points
-    },
-    reducePoints: (state, action) => {
-      state[action.payload.id].points -= action.payload.points
     },
   },
 })

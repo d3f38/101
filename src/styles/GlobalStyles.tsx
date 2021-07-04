@@ -6,4 +6,7 @@ export const GlobalStyles = createGlobalStyle`
     font-family: 'Nunito', sans-serif;
   }
 
+  button {
+    font-family: 'Nunito', sans-serif;
+  }
 `

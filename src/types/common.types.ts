@@ -36,8 +36,15 @@ export enum Suit {
 }
 
 export enum CardsValue {
+  TWO = '2',
+  THREE = '3',
+  FOUR = '4',
+  FIVE = '5',
   SIX = '6',
   SEVEN = '7',
+  EIGHT = '8',
+  NINE = '9',
+  TEN = '10',
   JACK = 'JACK',
   QUEEN = 'QUEEN',
   KING = 'KING',
@@ -45,6 +52,15 @@ export enum CardsValue {
 }
 
 export enum CardsPoint {
+  TWO = 2,
+  THREE = 3,
+  FOUR = 4,
+  FIVE = 5,
+  SIX = 6,
+  SEVEN = 7,
+  EIGHT = 8,
+  NINE = 0,
+  TEN = 10,
   JACK = 2,
   QUEEN = 3,
   KING = 4,
