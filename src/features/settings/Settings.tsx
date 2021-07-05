@@ -59,6 +59,12 @@ const Container = styled.div`
 
   label {
     margin-left: 8px;
+    cursor: pointer;
+  }
+
+  label,
+  input {
+    cursor: pointer;
   }
 `
 

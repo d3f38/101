@@ -47,11 +47,19 @@ export const playersSlice = createSlice({
     handOutCards: (state, action) => handOut(action.payload, state),
     nextStep: (state, action) => {
       const currentActivePlayer = action.payload.id
+      console.log(
+        '🚀 ~ file: playersSlice.ts ~ line 50 ~ currentActivePlayer',
+        currentActivePlayer
+      )
 
       const nextActivePlayer = getNextPlayerId(
         currentActivePlayer,
         state.length,
         action.payload.skip
+      )
+      console.log(
+        '🚀 ~ file: playersSlice.ts ~ line 56 ~ nextActivePlayer',
+        nextActivePlayer
       )
 
       state[currentActivePlayer].isActive = false

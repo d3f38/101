@@ -48,7 +48,8 @@ export const Player: FC<{
   const [isShownSuitSelect, setIsShownSuitSelect] = useState(false)
   const [isCoveredSix, setIsCoveredSix] = useState(true)
 
-  const sendToNextStep = (id: number, skip = false) => {
+  const sendToNextStep = (id: number, skip = false, counter: number) => {
+    console.log('🚀 ~  sendToNextStep ~ counter', counter)
     nextStep(id, skip)
   }
 
@@ -67,7 +68,6 @@ export const Player: FC<{
     if (isMatchRules) {
       setSuit(null)
       updatePile([...pile, card])
-      console.log('🚀 ~ file: index.tsx ~ line 108 ~ handleClick ~ id', id)
       updatePlayerCards(
         id,
         cards.filter((item) => item.code !== card.code)
@@ -77,29 +77,29 @@ export const Player: FC<{
       const cardConditions = getCardConditions(card, lastPileCard)
 
       if (cardConditions.isAce) {
-        sendToNextStep(id, true)
+        sendToNextStep(id, true, 1)
       } else if (cardConditions.isSpadesKing) {
         getCards(nextPlayerId, PenaltyCard.KING_SPADES)
-        sendToNextStep(id, true)
+        sendToNextStep(id, true, 2)
       } else if (cardConditions.isSpadesSeven) {
         getCards(nextPlayerId, PenaltyCard.SEVEN_SPADES)
-        sendToNextStep(id, true)
+        sendToNextStep(id, true, 3)
       } else if (cardConditions.isSeven) {
         getCards(nextPlayerId, PenaltyCard.SEVEN)
-        sendToNextStep(id, true)
+        sendToNextStep(id, true, 4)
       } else if (cardConditions.isSix) {
         setIsCoveredSix(false)
       } else if (cardConditions.isQueen) {
         setIsShownSuitSelect(true)
       } else if (isCoveredSix && !isShownSuitSelect) {
-        sendToNextStep(id)
+        sendToNextStep(id, false, 5)
       }
-
+      console.log('🚀 ~  isShownSuitSelect', isShownSuitSelect)
       if (cardConditions.isCovered) {
         setIsCoveredSix(true)
 
         if (cardConditions.isCardWithoutSkipStep && !isShownSuitSelect) {
-          sendToNextStep(id)
+          sendToNextStep(id, false, 6)
         }
       }
     } else {
@@ -113,19 +113,14 @@ export const Player: FC<{
       setHasNextStep(id, nextStepExist)
 
       if (!nextStepExist && alreadyTookTheCard && !isShownSuitSelect) {
-        sendToNextStep(id)
+        sendToNextStep(id, false, 7)
         setAlreadyTookTheCard(false)
       }
     } else {
       allPlayers.forEach((item) => {
         const roundPoints = calcPoints(item.cards)
-        console.log(
-          '🚀 ~ file: index.tsx ~ line 122 ~ allPlayers.forEach ~ roundPoints',
-          roundPoints
-        )
 
         updatePoints(item.id, roundPoints)
-
         pauseGame()
       })
     }
@@ -168,7 +163,7 @@ export const Player: FC<{
           onChange={(e) => {
             setSuit(e.target.value)
             setIsShownSuitSelect(false)
-            sendToNextStep(id)
+            sendToNextStep(id, false, 8)
           }}
         />
       )}

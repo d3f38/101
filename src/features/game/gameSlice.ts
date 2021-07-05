@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { RootState } from '@app/app/rootReducer'
+import { DEFAULT_PLAYERS } from '@app/constants'
 
 interface GameState {
   round: number
   isPlaying: boolean
   gameOver: boolean
   newGame: boolean
+  players: number
 }
 
 const initialState: GameState = {
@@ -14,6 +16,7 @@ const initialState: GameState = {
   isPlaying: true,
   gameOver: false,
   newGame: true,
+  players: DEFAULT_PLAYERS,
 }
 
 export const gameSlice = createSlice({

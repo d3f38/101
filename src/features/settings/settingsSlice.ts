@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { RootState } from '@app/app/rootReducer'
+import { DEFAULT_PLAYERS } from '@app/constants'
 
 interface SettingsState {
   playersAmount: number
 }
 
 const initialState: SettingsState = {
-  playersAmount: 3,
+  playersAmount: DEFAULT_PLAYERS,
 }
 
 export const settingsSlice = createSlice({
