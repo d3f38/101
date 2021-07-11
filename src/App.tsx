@@ -7,6 +7,7 @@ import { ThemeProvider } from 'styled-components'
 import { theme } from '@app/styles'
 
 import { store } from './app/store'
+import { Layout } from './components/Layout'
 import { GlobalStyles } from './styles/GlobalStyles'
 import { Routes } from './routes'
 
@@ -17,9 +18,12 @@ function App() {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <Router>
-          <Routes />
-        </Router>
+        <Layout>
+          <Router>
+            <Routes />
+          </Router>
+        </Layout>
+
         <ToastContainer
           position="bottom-left"
           autoClose={5000}
