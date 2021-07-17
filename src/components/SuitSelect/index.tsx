@@ -41,10 +41,13 @@ export const SuitSelect: FC<{ onChange: (e: any) => void }> = ({
 }
 
 const Container = styled.div`
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   flex-direction: column;
   padding: 10px;
+  margin-top: 16px;
   background-color: #e8f3f5;
   border-radius: 10px;
 `

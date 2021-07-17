@@ -23,11 +23,13 @@ export const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    nextRound: (state) => {
+    nextRound: (state, action) => {
+      console.log('🚀 ~ file: gameSlice.ts ~ line 27 ~ action', action)
       state.round += 1
       state.gameOver = false
       state.newGame = true
       state.isPlaying = true
+      state.players = action.payload || DEFAULT_PLAYERS
     },
     continueGame: (state) => {
       state.isPlaying = true
@@ -44,6 +46,16 @@ export const gameSlice = createSlice({
       state.gameOver = false
       state.newGame = true
       state.isPlaying = true
+      state.round = 1
+    },
+    clearGame: (state) => {
+      state.gameOver = false
+      state.newGame = true
+      state.isPlaying = true
+      state.round = 1
+    },
+    changePlayersAmount(state, action) {
+      state.players = action.payload
     },
   },
 })

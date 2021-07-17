@@ -38,9 +38,10 @@ export const Player: FC<{
     updatePlayerCards,
     setHasNextStep,
     updatePoints,
+    kickPlayer,
   } = usePlayers()
 
-  const { pauseGame, finishGame, gameOver } = useGame()
+  const { pauseGame, finishGame, gameOver, continueGame } = useGame()
 
   const lastPileCard = pile[pile.length - 1]
   const { id, isActive, cards, points, isOpponent } = data
@@ -59,6 +60,7 @@ export const Player: FC<{
 
       updateRemaining(response.data.remaining)
       takeСards(id, response.data.cards)
+      notify(`Player ${id} takes ${amountCards} cards`)
     }
   }
 
@@ -91,10 +93,11 @@ export const Player: FC<{
         setIsCoveredSix(false)
       } else if (cardConditions.isQueen) {
         setIsShownSuitSelect(true)
+        console.log('pause', 1)
       } else if (isCoveredSix && !isShownSuitSelect) {
         sendToNextStep(id, false, 5)
       }
-      console.log('🚀 ~  isShownSuitSelect', isShownSuitSelect)
+
       if (cardConditions.isCovered) {
         setIsCoveredSix(true)
 
@@ -112,35 +115,61 @@ export const Player: FC<{
       const nextStepExist = checkNextStep(cards, lastPileCard, activeSuit)
       setHasNextStep(id, nextStepExist)
 
-      if (!nextStepExist && alreadyTookTheCard && !isShownSuitSelect) {
+      if (
+        !nextStepExist &&
+        alreadyTookTheCard &&
+        !isShownSuitSelect &&
+        isCoveredSix
+      ) {
         sendToNextStep(id, false, 7)
         setAlreadyTookTheCard(false)
       }
     } else {
+      console.log('pause', 2)
+      pauseGame()
+
       allPlayers.forEach((item) => {
         const roundPoints = calcPoints(item.cards)
 
         updatePoints(item.id, roundPoints)
-        pauseGame()
       })
     }
-  }, [cards, pile, activeSuit, isShownSuitSelect])
+  }, [cards, pile, activeSuit, isShownSuitSelect, isCoveredSix])
+
+  // useEffect(() => {
+  //   if (!isPlaying && cards.length && !isShownSuitSelect) {
+  //     const roundPoints = calcPoints(cards)
+
+  //     updatePoints(id, roundPoints)
+  //   }
+  // }, [isPlaying])
 
   useEffect(() => {
     if (points > 25) {
+      kickPlayer(id)
+      console.log('pause', 3)
+      pauseGame()
+
+      notify(`Player ${id} is out`)
+    } else if (gameOver) {
+      console.log('winner Player', id)
       finishGame()
     }
   }, [points])
 
   useEffect(() => {
-    if (isActive && isOpponent) {
-      setTimeout(() => handleClick(cards[0]), 2000)
+    if (isActive) {
+      setTimeout(() => handleClick(cards[0]), 200)
     }
   }, [])
 
   return (
-    <Container isActive={isActive && !gameOver}>
-      <Wrapper>
+    <Container
+      isActive={isActive && !gameOver}
+      isOpponent={isOpponent}
+      players={allPlayers.length}
+    >
+      <Wrapper disabled={isShownSuitSelect}>
         {cards &&
           cards.map((item, index) => (
             <CardWrapper left={index} key={item.code}>
@@ -158,12 +187,13 @@ export const Player: FC<{
         </PlayerInfo>
       </ActionsBlock>
 
-      {isShownSuitSelect && isActive && (
+      {isShownSuitSelect && isActive && cards.length > 0 && (
         <SuitSelect
           onChange={(e) => {
             setSuit(e.target.value)
             setIsShownSuitSelect(false)
             sendToNextStep(id, false, 8)
+            continueGame()
           }}
         />
       )}
@@ -171,23 +201,37 @@ export const Player: FC<{
   )
 }
 
-const Container = styled.div<{ isActive: boolean }>`
+const Container = styled.div<{
+  isActive: boolean
+  isOpponent: boolean
+  players: number
+}>`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   pointer-events: ${({ isActive }) => (isActive ? 'all' : 'none')};
   opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
+
+  &:nth-child(odd) {
+    position: relative;
+    top: ${({ isOpponent, players }) =>
+      isOpponent && players !== 3 && players !== 2 ? '200px' : '0'};
+  }
 `
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ disabled: boolean }>`
   display: flex;
   justify-content: center;
+  min-height: 110px;
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'all')};
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `
 
 const CardWrapper = styled.div<{ left: number }>`
   position: relative;
-  left: -${({ left }) => left * 70}px;
+  width: 25px;
+  left: -25px;
 
   &:hover div {
     transform: translateY(-25px);
@@ -195,13 +239,18 @@ const CardWrapper = styled.div<{ left: number }>`
 `
 
 const ActionsBlock = styled.div`
+  position: relative;
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  margin-top: 16px;
 `
 
 const DealerButton = styled.div`
+  position: absolute;
+  top: 15px;
+  left: -40px;
   width: 30px;
   min-width: 30px;
   height: 30px;

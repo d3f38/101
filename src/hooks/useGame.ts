@@ -11,18 +11,24 @@ export const useGame = () => {
     pauseGame,
     startGame,
     finishGame,
+    clearGame,
+    changePlayersAmount,
   } = gameActions
 
-  const { gameOver, isPlaying, round } = useSelector(selectGame)
+  const { gameOver, isPlaying, round, players } = useSelector(selectGame)
 
   return {
     round,
     gameOver,
     isPlaying,
-    nextRound: () => dispatch(nextRound()),
+    players,
+    nextRound: (playersAmount?: number) => dispatch(nextRound(playersAmount)),
     continueGame: () => dispatch(continueGame()),
     pauseGame: () => dispatch(pauseGame()),
     startGame: () => dispatch(startGame()),
     finishGame: () => dispatch(finishGame()),
+    clearGame: () => dispatch(clearGame()),
+    changePlayersAmount: (playersAmount: number) =>
+      dispatch(changePlayersAmount(playersAmount)),
   }
 }

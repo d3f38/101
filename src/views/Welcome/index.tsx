@@ -1,18 +1,36 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { CardsIcon } from '@app/components/icons/Cards'
-import { Settings } from '@app/features/settings/Settings'
+import { Settings } from '@app/components/Settings'
+import { useDeck } from '@app/hooks/useDeck'
+import { useGame } from '@app/hooks/useGame'
+import { usePlayers } from '@app/hooks/usePlayers'
 
 export const Welcome = () => {
+  const { getNewDeck } = useDeck()
+  const { clearPoints } = usePlayers()
+  const { clearGame } = useGame()
+
+  const startGame = () => {
+    clearPoints()
+    getNewDeck()
+  }
+
+  useEffect(() => {
+    clearGame()
+  }, [])
+
   return (
     <Container>
       <StyledCardsIcon />
       <Title>101</Title>
       <Menu>
         <ButtonLink>
-          <StyledLink to="/game">NEW GAME</StyledLink>
+          <StyledLink to="/game" onClick={startGame}>
+            NEW GAME
+          </StyledLink>
         </ButtonLink>
 
         <Settings />

@@ -1,15 +1,13 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 
-import { changePlayersAmount, selectSettings } from './settingsSlice'
+import { useGame } from '@app/hooks/useGame'
 
 export const Settings = () => {
-  const dispatch = useDispatch()
-  const { playersAmount } = useSelector(selectSettings)
+  const { changePlayersAmount, players } = useGame()
 
   const handleChange = (e: any) => {
-    dispatch(changePlayersAmount(+e.target.value))
+    changePlayersAmount(+e.target.value)
   }
 
   return (
@@ -22,7 +20,7 @@ export const Settings = () => {
           name="players-amount"
           type="radio"
           value="2"
-          checked={playersAmount === 2}
+          checked={players === 2}
           onChange={handleChange}
         />
       </label>
@@ -32,7 +30,7 @@ export const Settings = () => {
           name="players-amount"
           type="radio"
           value="3"
-          checked={playersAmount === 3}
+          checked={players === 3}
           onChange={handleChange}
         />
       </label>
@@ -42,7 +40,7 @@ export const Settings = () => {
           name="players-amount"
           type="radio"
           value="4"
-          checked={playersAmount === 4}
+          checked={players === 4}
           onChange={handleChange}
         />
       </label>

@@ -47,10 +47,6 @@ export const playersSlice = createSlice({
     handOutCards: (state, action) => handOut(action.payload, state),
     nextStep: (state, action) => {
       const currentActivePlayer = action.payload.id
-      console.log(
-        '🚀 ~ file: playersSlice.ts ~ line 50 ~ currentActivePlayer',
-        currentActivePlayer
-      )
 
       const nextActivePlayer = getNextPlayerId(
         currentActivePlayer,
@@ -58,7 +54,9 @@ export const playersSlice = createSlice({
         action.payload.skip
       )
       console.log(
-        '🚀 ~ file: playersSlice.ts ~ line 56 ~ nextActivePlayer',
+        '🚀 ~ active players',
+        currentActivePlayer,
+        '=>',
         nextActivePlayer
       )
 
@@ -66,19 +64,29 @@ export const playersSlice = createSlice({
       state[nextActivePlayer].isActive = true
     },
     takeСards: (state, action) => {
-      state[action.payload.id].cards = [
-        ...state[action.payload.id].cards,
-        ...action.payload.cards,
-      ]
+      if (state[action.payload.id])
+        state[action.payload.id].cards = [
+          ...state[action.payload.id].cards,
+          ...action.payload.cards,
+        ]
     },
     setHasNextStep: (state, action) => {
-      state[action.payload.id].hasNextStep = action.payload.hasNextStep
+      if (state[action.payload.id])
+        state[action.payload.id].hasNextStep = action.payload.hasNextStep
     },
     updatePlayerCards: (state, action) => {
-      state[action.payload.id].cards = action.payload.cards
+      if (state[action.payload.id])
+        state[action.payload.id].cards = action.payload.cards
     },
     updatePoints: (state, action) => {
-      state[action.payload.id].points += action.payload.points
+      if (state[action.payload.id])
+        state[action.payload.id].points += action.payload.points
+    },
+    clearPoints: (state) => {
+      state.forEach((item) => (item.points = 0))
+    },
+    kickPlayer: (state, action) => {
+      state.splice(action.payload, 1)
     },
   },
 })
