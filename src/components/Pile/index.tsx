@@ -20,11 +20,11 @@ export const Pile: FC<{ cards: Cards }> = memo(({ cards }) => {
 
 const Container = styled.div`
   position: relative;
-  margin-left: 100px;
+  margin-left: 50px;
 `
 
 const CardWrapper = styled.div`
   position: absolute;
   left: 0;
-  top: 0;
+  top: -50px;
 `

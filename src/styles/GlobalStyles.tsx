@@ -9,4 +9,12 @@ export const GlobalStyles = createGlobalStyle`
   button {
     font-family: 'Nunito', sans-serif;
   }
+
+  *::selection {
+    background: transparent;
+  }
+
+  div {
+    box-sizing: border-box;
+  }
 `

@@ -18,6 +18,8 @@ export const usePlayers = () => {
     updatePlayerCards,
     updatePoints,
     setHasNextStep,
+    kickPlayer,
+    clearPoints,
   } = playersActions
 
   const allPlayers = useSelector(selectAllPlayers)
@@ -37,5 +39,7 @@ export const usePlayers = () => {
       dispatch(updatePoints({ id, points })),
     setHasNextStep: (id: number, hasNextStep: boolean) =>
       dispatch(setHasNextStep({ id, hasNextStep })),
+    kickPlayer: (id: number) => dispatch(kickPlayer(id)),
+    clearPoints: () => dispatch(clearPoints()),
   }
 }

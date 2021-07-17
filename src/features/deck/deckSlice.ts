@@ -76,6 +76,7 @@ export const deckSlice = createSlice({
       .addCase(getNewDeck.fulfilled, (state, action) => {
         state.deckId = action.payload.deck_id
         state.remaining = action.payload.remaining
+        state.activeSuit = null
       })
       .addCase(getNewDeck.rejected, (state, action) => {
         state.status = 'idle'

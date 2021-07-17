@@ -8,6 +8,10 @@ type CardData = {
   value: string
   suit: string
   code: string
+  images: {
+    png: string
+    svg: string
+  }
 }
 
 export const CardComponent: FC<{
@@ -38,8 +42,8 @@ const CardWrapper = styled.div<{
   angle?: number
   isActive?: boolean
 }>`
-  width: ${({ isBackside }) => (isBackside ? '100px' : '102px')};
-  height: 142px;
+  width: ${({ isBackside }) => (isBackside ? '80px' : '80px')};
+  height: 110px;
   margin-right: 4px;
   transform: ${({ angle }) => (angle ? 'rotate(' + angle + 'deg)' : '')};
   box-shadow: ${({ isActive }) =>

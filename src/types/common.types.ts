@@ -3,6 +3,10 @@ export type Cards = {
   value: string
   suit: string
   code: string
+  images: {
+    png: string
+    svg: string
+  }
 }[]
 
 export type Card = {
