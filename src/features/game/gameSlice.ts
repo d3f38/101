@@ -53,6 +53,7 @@ export const gameSlice = createSlice({
       state.newGame = true
       state.isPlaying = true
       state.round = 1
+      state.players = DEFAULT_PLAYERS
     },
     changePlayersAmount(state, action) {
       state.players = action.payload
