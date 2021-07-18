@@ -1,6 +1,19 @@
 import { Card, CardsValue, Suit } from '@app/types/common.types'
 
-export const getCardConditions = (card: Card, lastPilecard: Card) => ({
+type Condition =
+  | 'isSix'
+  | 'isSeven'
+  | 'isAce'
+  | 'isQueen'
+  | 'isSpadesKing'
+  | 'isSpadesSeven'
+  | 'isCardWithoutSkipStep'
+  | 'isCovered'
+
+export const getCardConditions = (
+  card: Card,
+  lastPilecard: Card
+): Record<Condition, boolean> => ({
   isSix: card.value === CardsValue.SIX,
   isSeven: card.value === CardsValue.SEVEN,
   isAce: card.value === CardsValue.ACE,

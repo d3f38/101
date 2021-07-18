@@ -6,6 +6,6 @@ export const checkNextStep = (
   cards: Cards,
   pileCard: Card,
   activeSuit: ActiveSuit | null
-) => {
+): boolean => {
   return cards.some((item) => checkCardRules(item, pileCard, activeSuit))
 }

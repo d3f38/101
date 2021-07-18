@@ -1,22 +1,39 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
+import { SUITS } from '@app/constants'
 import { ActiveSuit, Suit } from '@app/types/common.types'
+import { getRandomInt } from '@app/utils/getRandomInt'
 
 import { SuitIcon } from '../SuitIcon'
 
-export const SuitSelect: FC<{ onChange: (e: any) => void }> = ({
-  onChange,
-}) => {
+export const SuitSelect: FC<{
+  onChange: (e: any) => void
+  isOpponent: boolean
+}> = ({ onChange, isOpponent }) => {
   const [active, setActive] = useState<ActiveSuit | null>(null)
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    onChange(e)
+    onChange(e.target.value)
 
     if (e.target.value) {
       setActive(e.target.value as ActiveSuit)
     }
   }
+
+  const autoChange = (e: ActiveSuit) => {
+    onChange(e)
+
+    if (e) {
+      setActive(e)
+    }
+  }
+
+  useEffect(() => {
+    if (isOpponent) {
+      autoChange(SUITS[getRandomInt(0, SUITS.length)] as ActiveSuit)
+    }
+  }, [])
 
   return (
     <Container>

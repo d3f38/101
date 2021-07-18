@@ -60,8 +60,9 @@ export const playersSlice = createSlice({
         nextActivePlayer
       )
 
-      state[currentActivePlayer].isActive = false
-      state[nextActivePlayer].isActive = true
+      if (state[currentActivePlayer])
+        state[currentActivePlayer].isActive = false
+      if (state[nextActivePlayer]) state[nextActivePlayer].isActive = true
     },
     takeСards: (state, action) => {
       if (state[action.payload.id])
