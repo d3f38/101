@@ -118,7 +118,13 @@ export const Game = () => {
 
             <OpponentsSide>
               {opponents &&
-                opponents.map((item) => <Player data={item} key={item.id} />)}
+                opponents.map((item) => (
+                  <Player
+                    data={item}
+                    key={item.id}
+                    getAdditionalCard={getAdditionalCard}
+                  />
+                ))}
             </OpponentsSide>
 
             {winner ? (
