@@ -1,5 +1,5 @@
 # 101
----
+
 Card game ([common description](https://ru.wikipedia.org/wiki/101_(%D0%B8%D0%B3%D1%80%D0%B0)))
 
 [Demo](https://101-card-game.netlify.app/)
@@ -13,7 +13,7 @@ Run `npm install` to install the project.
 ## Develop
 Run `npm run start`, this will fire up a browser and watch files.
 
----
+
 ## Rules
 
 ### Раздача
