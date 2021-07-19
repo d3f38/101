@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { SUITS } from '@app/constants'
 import { ActiveSuit, Suit } from '@app/types/common.types'
 import { getRandomInt } from '@app/utils/getRandomInt'
+import { notify } from '@app/utils/notify'
 
 import { SuitIcon } from '../SuitIcon'
 
@@ -26,6 +27,8 @@ export const SuitSelect: FC<{
 
     if (e) {
       setActive(e)
+
+      notify(`Current suit ${e}`)
     }
   }
 

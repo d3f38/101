@@ -27,7 +27,8 @@ import { SuitSelect } from '../SuitSelect'
 
 export const Player: FC<{
   data: PlayerType
-}> = ({ data }) => {
+  getAdditionalCard?: () => void
+}> = ({ data, getAdditionalCard }) => {
   const {
     deckId,
     pile,
@@ -54,6 +55,7 @@ export const Player: FC<{
   const lastPileCard = pile[pile.length - 1]
   const { id, isActive, cards, points, isOpponent } = data
 
+  const [hasAdditionalCard, setHasAdditionalCard] = useState(false)
   const [isShownSuitSelect, setIsShownSuitSelect] = useState(false)
   const [isCoveredSix, setIsCoveredSix] = useState(true)
 
@@ -171,14 +173,31 @@ export const Player: FC<{
 
       if (opponentStep) {
         setTimeout(() => handleClick(opponentStep), 1000)
+      } else if (getAdditionalCard) {
+        setTimeout(() => {
+          getAdditionalCard()
+
+          setHasAdditionalCard(true)
+        }, 1000)
       }
     }
   }, [isActive])
 
-  // useEffect(() => {
-  //   if (isActive && isOpponent) {
-  //   }
-  // }, [isActive, isShownSuitSelect])
+  useEffect(() => {
+    console.log(
+      '🚀 ~ file: index.tsx ~ line 193 ~ useEffect ~ setHasAdditionalCard',
+      hasAdditionalCard
+    )
+    if (isActive && isOpponent && hasAdditionalCard) {
+      setHasAdditionalCard(false)
+
+      const opponentStep = pushOpponentStep(cards, lastPileCard, activeSuit)
+
+      if (opponentStep) {
+        setTimeout(() => handleClick(opponentStep), 1000)
+      }
+    }
+  }, [hasAdditionalCard])
 
   return (
     <Container

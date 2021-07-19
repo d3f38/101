@@ -12,14 +12,13 @@ export const pushOpponentStep = (
     (item) => checkCardRules(item, pileCard, activeSuit),
     activeSuit
   )
-  console.log(
-    '🚀 ~ file: pushOpponentStep.ts ~ line 15 ~ cardsAccordingRules',
-    cardsAccordingRules
-  )
+
   const nextCardForStep = getRandomInt(0, cardsAccordingRules.length - 1)
   console.log(
-    '🚀 ~ file: pushOpponentStep.ts ~ line 20 ~ nextCardForStep',
-    nextCardForStep
+    '🚀 ~  nextCardForStep',
+    nextCardForStep,
+    ' => ',
+    cardsAccordingRules[nextCardForStep]
   )
 
   return cardsAccordingRules[nextCardForStep]
